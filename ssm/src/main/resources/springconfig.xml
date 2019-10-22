@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/mvc 
+	http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+	
+	
+	<!-- 加载db.properties文件
+	<bean  id="config" class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+		<property name="locations">
+			<array>
+				<value>classpath:db.properties</value>
+			</array>
+		</property>
+	</bean>
+	-->
+	<!-- 配置配置数据库信息（替代mybatis的配置文件conf.xml）
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+			<property name="driverClassName" value="${classname}"></property>
+			<property name="url" value="${url}"></property>
+			<property name="username" value="${user}"></property>
+			<property name="password" value="${password}"></property>
+	</bean>
+	 -->
+	<!-- 连接数据库 -->
+	<bean id="dataSource"  class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>  
+      	<property name="url" value="jdbc:mysql://127.0.0.1:3306/message"></property>  
+      	<property name="username" value="root"></property>
+      	<property name="password" value="1234321"></property>
+	</bean>
+	
+	<!-- 创建SqlSessionFactory -->
+	<bean id="SessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="mapperLocations" value="classpath:com/liuhao/dao/*.xml"></property>
+		<property name="configLocation" value="classpath:config.xml"></property>
+	</bean>
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	    <property name="sqlSessionFactory" ref="SessionFactory"></property>
+	    <property name="basePackage" value="com.liuhao.dao" />
+  	</bean>
+	
+	<!-- 启用spring注解 -->
+	<context:annotation-config/>
+	<context:component-scan base-package="com.liuhao"/>
+	
+	<!-- 做css、js被拦截处理 -->
+	<mvc:default-servlet-handler/>
+	<!-- 扩充了注解驱动，可以将请求参数绑定到控制器参数（防止controller失效） -->
+	<mvc:annotation-driven/>
+	
+	<!-- 配置视图解析器 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/views/"></property>
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+	<!-- 配置拦截器 -->
+	<!-- <mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<bean class="com.liuhao.util.MyHandlerInterceptorAdapter"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors> -->
+	 	
+	
+</beans>

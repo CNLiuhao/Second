@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liuhao.dao.ICitiesDao">
+	 <select id="SelectAll" resultType="com.liuhao.entity.AddressProvince">
+	 	select * from address_province
+	 </select>
+	 <select id="selectcity" resultType="com.liuhao.entity.AddressCity" parameterType="String">
+	 	select * from address_city where provinceCode = #{provinceCode}
+	 </select>
+	 <select id="selecttown" resultType="com.liuhao.entity.AddressTown" parameterType="String">
+	 	select * from address_town where cityCode = #{cityCode}
+	 </select>
+	 <select id="QueryProvincename" resultType="com.liuhao.entity.AddressProvince">
+	 	select distinct ap.code,ap.pname from sample_info s, address_province ap where s.province = ap.code and s.crop_category_id = #{cropCategoryId}
+	 </select>
+	 <select id="QueryProvinceToShow" resultType="com.liuhao.entity.AddressProvince">
+	 	select * from address_province 
+	 		where code in
+	 		<foreach collection="province" open="(" separator="," close=")" item="prov">
+	 			#{prov}
+	 		</foreach>
+	 </select>
+</mapper>

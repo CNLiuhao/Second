@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liuhao.dao.ICropcategoryDao">
+<cache
+	readOnly="true"
+	size="200"
+	eviction="FIFO"
+/>
+	<resultMap type="com.liuhao.entity.CropCategory" id="qop">
+		<id property="id"  column="id" />
+		<result property="cropcategory" column="crop_category"/>
+		<result property="state" column="state"/>
+	</resultMap>
+	 <select id="queryall" resultMap="qop" parameterType="integer">
+	 	select * from crop_category
+	 </select>
+	 <delete id="deletById">
+		delete from crop_category where id = #{id}	 	
+	 </delete>
+	 <select id="selcetone" resultMap="qop" parameterType="integer">
+	 	select * from crop_category where id = #{id} 
+	 </select>
+	 <update id="updateCrop" parameterType="com.liuhao.entity.CropCategory" >
+	 	update crop_category set crop_category = #{cropcategory} , state= #{state} where id= #{id}
+	 </update>
+	 <select id="count" resultType="integer">
+	 	select count(1) from crop_category
+	 </select>
+	 <insert id="insertcrop" parameterType="com.liuhao.entity.CropCategory">
+	 	insert into crop_category(id,crop_category,state) values(null,#{cropcategory},#{state});
+	 </insert>
+	 <select id="QueryALLaboutcropId" resultMap="qop">
+	 	select distinct c.id,c.crop_category from sample_info s,crop_category  c where s.crop_category_id = c.id
+	 </select>
+</mapper>

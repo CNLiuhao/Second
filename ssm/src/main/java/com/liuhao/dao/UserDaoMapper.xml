@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liuhao.dao.IUserDao">
+	<resultMap type="com.liuhao.entity.User" id="qop">
+		<id property="id"  column="id" />
+		<result property="loginName" column="login_name"/>
+		<result property="username" column="username"/>
+		<result property="idcard" column="idcard"/>
+		<result property="email" column="email"/>
+		<result property="phone" column="phone"/>
+		<result property="applicationTime" column="application_time"/>
+		<result property="applicationDirection" column="application_direction"/>
+		<result property="checkStatus" column="check_status"/>
+		<result property="state" column="state"/>
+		<result property="createTime" column="create_time"/>
+		<result property="isdel" column="isdel"/>
+		<result property="customerPower" column="customer_power"/>
+		<result property="password" column="password"/>
+		<result property="role" column="role"/>
+		<result property="createpeople" column="createpeople"/>
+		<result property="category" column="category"/>
+		<result property="area" column="area"/>
+		<result property="starttime" column="starttime"/>
+		<result property="endtime" column="endtime"/>
+		<result property="company" column="company"/>
+		<result property="address" column="address"/>
+		<result property="msgflag" column="msgflag"/>
+		<association property="users" javaType="com.liuhao.entity.User">
+			<id  property="id" jdbcType="INTEGER" column="id"/>
+			<result property="cteateName" jdbcType="VARCHAR" column="cteateName"/>
+			<result property="username" jdbcType="VARCHAR" column="username"/>
+		</association>
+		<association property="roles" javaType="com.liuhao.entity.Roles">
+			<id  property="rid" jdbcType="INTEGER" column="rid"/>
+			<result property="role" jdbcType="VARCHAR" column="role"/>
+			<result property="chrole"  jdbcType="VARCHAR" column="chrole"/>
+		</association>
+	</resultMap>
+	<resultMap type="com.liuhao.entity.CropCategory" id="od">
+		<id  property="id" column="id"/>
+		<result property="cropcategory" column="crop_category"/>
+		<result property="state" column="state"/>
+	</resultMap>
+	 <select id="queryall" resultMap="qop">
+	 	select u.id,u.login_name,u.username,r.chrole,u.create_time ,u1.username as cteateName, u.state  from user u,roles r,(select createpeople as urid ,username from user)as u1 where u.role = r.rid and u.createpeople = u1.urid
+	 	
+	 	<if test="username != null and username != ''">
+	 		and u.username like concat('%' , #{username} ,'%')
+	 	</if>
+	 	group by u.id 
+	 </select>
+	 <delete id="deleteuser">
+	 	delete from user where id=#{id}
+	 </delete>
+	 <select id="queryallroles" resultType="com.liuhao.entity.Roles">
+	 	select * from roles
+	 </select>
+	 <select id="queryallprovince" resultType="com.liuhao.entity.AddressProvince">
+	 	select * from address_province
+	 </select>
+	 <select id="queryallcropcategory" resultMap="od">
+	 	select * from crop_category
+	 </select>
+	 <insert id="insertuser">
+	 	insert into user
+	 	(id,login_name,username,idcard,email,phone,application_time,application_direction,check_status,state,create_time,isdel,customer_power,password,role,createpeople
+	 	<if test="category != null and area != null and starttime != null and endtime != null">
+	 		,category,area,starttime,endtime
+	 	</if>
+	 	,company,address,msgflag)
+	 	values
+	 	(null,#{loginName},#{username},'131588199913161487','245106@1.com','13564855464','2019-08-08 17:25:25',null,null,#{state},'2019-08-08 17:25:25',null,null,#{password},#{role},1
+	 	<if test="category != null and area != null and starttime != null and endtime != null">
+	 		, #{category},#{area}, #{starttime}, #{endtime} 
+	 	</if>
+	 	,null,null,null)
+	 </insert>
+	 <select id="selectone" resultMap="qop">
+	 	select *from user u,roles r  where u.role = r.rid and  id = #{id}
+	 </select>
+	 <update id="update" parameterType="com.liuhao.entity.User">
+	 	update user set login_name = #{loginName} , username = #{username},password = #{password} , state = #{state} , role = #{role}
+	 	
+	 	<if test="category != null and '' != category">
+	 		, category = #{category} 
+	 	</if>
+	 	<if test="area != null and '' != area">
+	 		, area = #{area} 
+	 	</if>
+	 	<if test="starttime != null and '' != starttime">
+	 		 , starttime = #{starttime} 
+	 	</if>
+	 	<if test="endtime != null and '' != endtime">
+	 		, endtime = #{endtime} 
+	 	</if>
+	 	where id = #{id}
+	 </update>
+</mapper>

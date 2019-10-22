@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liuhao.dao.ICropSpeciesDao">
+	 
+	 
+	 <resultMap type="com.liuhao.entity.CropSpecies" id="pa">
+	 	<id property="cropSid"  column="crop_sid" />
+		<result property="cropSpecies" column="crop_species"/>
+		<result property="cropCategoryId" column="crop_category_id"/>
+		<result property="state" column="state"/>
+	 </resultMap>
+	 
+	 
+	 <select id="QueryAllCropSpecies" resultMap="pa">
+	 	select * from crop_species
+	 </select>
+	 <select id="QueryAll" resultMap="pa" >
+	 	select * from crop_species where crop_category_id = #{cropCategoryId}
+	 </select>
+	 
+	 
+	 
+	 
+	 <delete id="DeleteById">
+	 	delete from crop_species where crop_sid = #{cropSid}
+	 </delete>
+	 <select id="SelectSpOne" resultMap="pa">
+	 	select * from crop_species where crop_sid = #{cropSid}
+	 </select>
+	 <update id="UpdateSpOne">
+	 	update crop_species set crop_species = #{cropSpecies} , state = #{state}
+	 </update>
+	 
+	 <select id="QueryMessagefromsampleinfo" resultMap="pa">
+	 	select  distinct cs.crop_sid,cs.crop_species from sample_info s, crop_species cs where s.breed = cs.crop_sid and s.crop_category_id = #{cropCategoryId}
+	 </select>
+	 <select id="QuerySpeciesToshow" resultMap="pa">
+	 	select * from crop_species where crop_sid in
+	 		<foreach collection="breed" item="bred" open="(" close=")" separator="," >
+	 			#{bred}
+	 		</foreach>
+	 </select>
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liuhao.dao.ISampleToxinInfoDao">
+
+	<resultMap type="com.liuhao.entity.SampleToxinInfo" id="toxininfomap">
+		<id column="t_id" jdbcType="INTEGER" property="tid" />
+		 <result column="toxin_type" jdbcType="INTEGER" property="toxinType" />
+		 <result column="state" jdbcType="REAL" property="state" />
+	</resultMap>
+	<select id="QueryAllToxin" resultMap="toxininfomap">
+		select * from sample_toxin_info
+	</select>
+	<select id="QueryToxinfromsamplinfo" resultMap="toxininfomap">
+		select  distinct sti.tid,sti.toxin_type from sample_info s, sample_toxin st,sample_toxin_info sti where s.id = st.sample_info_id and
+		st.toxin_id=sti.tid and s.crop_category_id = #{cropCategoryId}
+	</select>
+	<select id="QueryToxinToShow" resultMap="toxininfomap">
+		select * from sample_toxin_info
+			where tid in
+			<foreach collection="txid" item="tx" open="(" separator="," close=")">
+				#{tx}
+			</foreach>
+	</select>
+</mapper>

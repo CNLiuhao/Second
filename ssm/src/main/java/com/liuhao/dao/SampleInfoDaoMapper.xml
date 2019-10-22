@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liuhao.dao.ISampleInfoDao">
+  <resultMap id="BaseResultMap" type="com.liuhao.entity.SampleInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="sample_id" jdbcType="VARCHAR" property="sampleId" />
+    <result column="crop_category_id" jdbcType="INTEGER" property="cropCategoryId" />
+    <result column="breed" jdbcType="INTEGER" property="breed" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="county" jdbcType="VARCHAR" property="county" />
+    <result column="township" jdbcType="VARCHAR" property="township" />
+    <result column="village" jdbcType="VARCHAR" property="village" />
+    <result column="household" jdbcType="VARCHAR" property="household" />
+    <result column="harvest_time" jdbcType="TIMESTAMP" property="harvestTime" />
+    <result column="sampling_time" jdbcType="TIMESTAMP" property="samplingTime" />
+    <result column="sampling_people" jdbcType="VARCHAR" property="samplingPeople" />
+    <result column="pollution_rate" jdbcType="REAL" property="pollutionRate" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="isdel" jdbcType="INTEGER" property="isdel" />
+    <result column="input_time" jdbcType="TIMESTAMP" property="inputTime" />
+    <result column="flag" jdbcType="INTEGER" property="flag" />
+    <result column="enterpeople" jdbcType="INTEGER" property="enterpeople" />
+    <result column="varieties" jdbcType="VARCHAR" property="varieties" />
+    <result column="seasonal" jdbcType="LONGVARCHAR" property="seasonal" />
+    <result column="description" jdbcType="LONGVARCHAR" property="description" />
+    <association property="addressProvince" javaType="com.liuhao.entity.AddressProvince">
+	     <id column="pid" jdbcType="INTEGER" property="pid" />
+	    <result column="code" jdbcType="CHAR" property="code" />
+	    <result column="pname" jdbcType="VARCHAR" property="pname" />
+	    <result column="chinaname" jdbcType="VARCHAR" property="chinaname" />
+    </association>
+    <association property="addressCity" javaType="com.liuhao.entity.AddressCity">
+	     <id column="cid" jdbcType="INTEGER" property="cid" />
+	    <result column="code" jdbcType="CHAR" property="code" />
+	    <result column="cname" jdbcType="VARCHAR" property="cname" />
+	    <result column="provinceCode" jdbcType="CHAR" property="provinceCode" />
+    </association>
+    <association property="addressTown" javaType="com.liuhao.entity.AddressTown">
+	    <id column="tid" jdbcType="INTEGER" property="tid" />
+	    <result column="code" jdbcType="CHAR" property="code" />
+	    <result column="tname" jdbcType="VARCHAR" property="tname" />
+	    <result column="cityCode" jdbcType="CHAR" property="cityCode" />
+    </association>
+    <association property="cropSpecies" javaType="com.liuhao.entity.CropSpecies">
+	      <id column="crop_sid" jdbcType="INTEGER" property="cropSid" />
+	    <result column="crop_species" jdbcType="VARCHAR" property="cropSpecies" />
+	    <result column="crop_category_id" jdbcType="INTEGER" property="cropCategoryId" />
+	    <result column="state" jdbcType="INTEGER" property="state" />
+    </association>
+    <association property="bacterialStrainInfo" javaType="com.liuhao.entity.BacterialStrainInfo">
+    	<id  column="id" jdbcType="INTEGER" property="id" />
+    	<result column="sample_info_id" jdbcType="INTEGER" property="sampleInfoId"/>
+    	<result column="sample_num" jdbcType="VARCHAR" property="sampleNum"/>
+    	<result column="original_num" jdbcType="VARCHAR" property="originalNum"/>
+    	<result column="word_addr" jdbcType="VARCHAR" property="wordAddr"/>
+    </association>
+    <association property="user" javaType="com.liuhao.entity.User">
+    	<id property="id"  column="id" />
+		<result property="loginName" column="login_name"/>
+		<result property="username" column="username"/>
+		<result property="idcard" column="idcard"/>
+		<result property="email" column="email"/>
+		<result property="phone" column="phone"/>
+		<result property="applicationTime" column="application_time"/>
+		<result property="applicationDirection" column="application_direction"/>
+		<result property="checkStatus" column="check_status"/>
+		<result property="state" column="state"/>
+		<result property="createTime" column="create_time"/>
+		<result property="isdel" column="isdel"/>
+		<result property="customerPower" column="customer_power"/>
+		<result property="password" column="password"/>
+		<result property="role" column="role"/>
+		<result property="createpeople" column="createpeople"/>
+		<result property="category" column="category"/>
+		<result property="area" column="area"/>
+		<result property="starttime" column="starttime"/>
+		<result property="endtime" column="endtime"/>
+		<result property="company" column="company"/>
+		<result property="address" column="address"/>
+		<result property="msgflag" column="msgflag"/>
+    </association>
+    <collection property="infos" ofType="com.liuhao.entity.SampleToxin">
+	    <id column="stid" jdbcType="INTEGER" property="stid" />
+		 <result column="toxin_id" jdbcType="INTEGER" property="toxinId" />
+		 <result column="toxin_count" jdbcType="REAL" property="toxinCount" />
+		 <result column="sample_info_id" jdbcType="INTEGER" property="sampleInfoId" />
+    	<association property="info" javaType="com.liuhao.entity.SampleToxinInfo">
+	    	 <id column="tid" jdbcType="INTEGER" property="tid" />
+		    <result column="toxin_type" jdbcType="VARCHAR" property="toxinType" />
+		    <result column="state" jdbcType="INTEGER" property="state" />
+    	</association>
+    </collection>
+  </resultMap>
+ <select id="findallsampleinfo" resultMap="BaseResultMap">
+ 	select si.id from sample_info si,
+ 	<if test="toxinType != null and '' != toxinType">
+ 		sample_toxin st,sample_toxin_info sti,
+ 	</if>
+ 		crop_species cs where si.breed = cs.crop_sid
+ 	<if test="toxinType != null and '' != toxinType">
+ 		and si.id = st.sample_info_id and st.toxin_id = sti.tid
+ 	</if>
+ 	<if test="sampleid != null and sampleid != ''">
+ 		and si.sample_id like "%"#{sampleid}"%"
+ 	</if>
+ 	<if test="min != null and min != ''">
+ 		and si.pollution_rate &lt;= #{max} and pollution_rate &gt;= #{min}
+ 	</if>
+ 	<if test="date != null and date != ''">
+ 		and si.sampling_time LIKE CONCAT('%',#{date},'%')
+ 	</if>
+ 	<if test="province != null and province != ''">
+ 		and si.province = #{province}
+ 	
+ 	</if>
+ 	<if test="city != null and city != ''">
+ 		and si.city = #{city}
+ 	
+ 	</if>
+	<if test="town != null and town != ''">
+ 		and si.county = #{town}
+ 	
+ 	</if>
+ 	 <if test="cropSpecies != null and cropSpecies != ''">
+ 		and cs.crop_sid = #{cropSpecies}
+ 	</if>
+ 	<if test="toxinType != null and toxinType != ''">
+ 		and sti.tid = #{toxinType}
+ 	</if> 
+ 	and isdel = 1 
+ </select>
+ <select id="findallinfo" resultMap="BaseResultMap">
+ 	select *from sample_info s,sample_toxin st,sample_toxin_info sti ,crop_species cs,address_province ap,
+ 	address_city ac,address_town at where s.breed = cs.crop_sid and s.province = ap.code 
+ 	and s.city = ac.code and s.county = at.code and s.id = st.sample_info_id and st.toxin_id = sti.tid
+ 	and s.id = #{id}
+ </select>
+
+	<select id="QueryTimefromSampleInfo" resultType="java.lang.String">
+		select  distinct year(s.sampling_time) from sample_info s, crop_species cs where s.breed = cs.crop_sid and s.crop_category_id = #{cropCategoryId} and s.sampling_time is not null
+	</select>
+	<select id="SelectQueryCondoitionsId" resultMap="BaseResultMap">
+		select distinct s.id from sample_info s left join  sample_toxin st on s.id = st.sample_info_id left join  sample_toxin_info sti on st.toxin_id = sti.tid
+		left join crop_species cs on s.breed = cs.crop_sid left join address_province ap on s.province = ap.code  left join  address_city ac on s.city = ac.code 
+		left join address_town at on s.county = at.code 
+		left join user u on s.enterpeople = u.id
+		left join bacterial_strain_info bsi on s.id = bsi.sample_info_id where  sti.state = 1 and cs.state = 1
+		<if test="breed != null">
+			and  s.breed in
+			<foreach collection="breed" item="bre" open="(" separator="," close=")">
+				#{bre}
+			</foreach>
+		</if>
+		<if test="txid != null">
+			and  sti.tid in
+			<foreach collection="txid" item="tx" open="(" separator="," close=")">
+				#{tx}
+			</foreach>
+		</if>
+		<if test="dates != null">
+			and  year(s.sampling_time) in
+			<foreach collection="dates" item="date" open="(" separator="," close=")">
+				#{date}
+			</foreach>
+		</if>
+		<if test="province != null">
+			and s.province in
+			<foreach collection="province" item="prov" open="(" separator="," close=")">
+				#{prov}
+			</foreach>
+		</if>
+		<if test="rate != null">
+			and pollution_rate between
+			<foreach collection="rate" item="rate"  separator="and" >
+				#{rate}
+			</foreach>
+		</if>
+	</select>
+ 	<select id="QuerymessagebyConditions" resultMap="BaseResultMap">
+		select * from sample_info s left join  sample_toxin st on s.id = st.sample_info_id left join  sample_toxin_info sti on st.toxin_id = sti.tid
+		left join crop_species cs on s.breed = cs.crop_sid left join address_province ap on s.province = ap.code  left join  address_city ac on s.city = ac.code 
+		left join address_town at on s.county = at.code
+		left join user u on s.enterpeople = u.id 
+		left join bacterial_strain_info bsi on s.id = bsi.sample_info_id where  sti.state = 1 and cs.state = 1
+		and s.id = #{sid}
+ 	</select>
+	<select id="QueryProvinceInSinfoByspecies" resultMap="BaseResultMap">
+		select distinct ap.* from sample_info s,address_province ap where s.province = ap.code 
+		<if test="cropSid !=null">
+			and s.breed=#{cropSid}
+		</if>
+	</select>
+	<select id="QueryTimeInSinfoByProv" resultType="java.lang.String">
+		select distinct year(s.sampling_time) from sample_info s,address_province ap where s.province = ap.code 
+		<if test="cropSid !=null">
+			and s.breed=#{cropSid}
+		</if>
+		<if test="pcode != null">
+			and ap.code=#{pcode}
+		</if>
+	</select>
+	<select id="QueryInSampleInfoByCcPT" resultMap="BaseResultMap">
+		select * from sample_info s,sample_toxin st,sample_toxin_info sti where s.id = st.sample_info_id and st.toxin_id = sti.tid 
+		<if test="cropCategoryId != null">
+			and s.crop_category_id=#{cropCategoryId}
+		</if>
+		<if test="cropSpecies != null">
+			and s.breed = #{cropSpecies}
+		</if>
+		<if test="province != null">
+			and s.province = #{province}
+		</if>
+		<if test="datetime !=null">
+			and sampling_time LIKE CONCAT('%',#{datetime},'%')
+		</if>
+		<if test="pollutions != null">
+			 and pollution_rate between
+			 <foreach collection="pollutions" item="rate"  separator="and" >
+				#{rate}
+			</foreach>
+		</if>
+	</select>
+	<select id="QueryTimeInMap" resultType="java.lang.String">
+		select distinct year(s.sampling_time) from sample_info s 
+		<if test="breed  != null">
+			where  breed=#{breed}
+		</if>
+	</select> 
+	<select id="QueryMessageShowOnMap" resultMap="BaseResultMap">
+		select * from sample_info s,sample_toxin st,sample_toxin_info sti where s.id = st.sample_info_id and st.toxin_id = sti.tid
+	
+			and s.crop_category_id=1
+		
+			and s.breed = 6
+			and sti.tid =5
+			
+		
+			and sampling_time LIKE CONCAT('%',2018,'%')
+	</select>
+</mapper>
